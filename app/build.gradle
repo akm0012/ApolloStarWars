@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id("com.apollographql.apollo3").version("3.5.0")
 }
 
 android {
@@ -66,6 +67,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
 
+    // Apollo
+    implementation "com.apollographql.apollo3:apollo-runtime"
+
     // Used in Logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
@@ -76,4 +80,9 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+}
+
+// Configure the Apollo plugin to specify the package in which the Kotlin files will be generated.
+apollo {
+    packageName.set("com.andrewkingmarshall.apollostarwars")
 }
