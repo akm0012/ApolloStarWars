@@ -69,6 +69,8 @@ dependencies {
 
     // Apollo
     implementation "com.apollographql.apollo3:apollo-runtime"
+    implementation("com.apollographql.apollo3:apollo-normalized-cache:$apollo_cache_version")
+    implementation("com.apollographql.apollo3:apollo-normalized-cache-sqlite:$apollo_cache_version")
 
     // Retrofit and Networking for Rest Calls
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

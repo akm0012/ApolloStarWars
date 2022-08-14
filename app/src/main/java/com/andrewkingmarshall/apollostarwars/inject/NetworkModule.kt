@@ -3,6 +3,9 @@ package com.andrewkingmarshall.apollostarwars.inject
 import android.content.Context
 import com.andrewkingmarshall.apollostarwars.BuildConfig
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.cache.normalized.api.MemoryCacheFactory
+import com.apollographql.apollo3.cache.normalized.normalizedCache
+import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.okHttpClient
 import dagger.Module
 import dagger.Provides
@@ -17,7 +20,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 class NetworkModule {
 
     @Provides
-    fun provideHttpClient(@ApplicationContext context: Context): OkHttpClient {
+    fun provideHttpClient(): OkHttpClient {
 
         val httpLoggingInterceptor = HttpLoggingInterceptor()
 
@@ -36,10 +39,22 @@ class NetworkModule {
     }
 
     @Provides
-    fun provideApolloClient(httpClient: OkHttpClient): ApolloClient {
+    fun provideApolloClient(
+        @ApplicationContext context: Context,
+        httpClient: OkHttpClient
+    ): ApolloClient {
+
+        // Creates a 10MB MemoryCacheFactory
+        val cacheFactory = MemoryCacheFactory(maxSizeBytes = 10 * 1024 * 1024)
+
+        val sqlNormalizedCacheFactory = SqlNormalizedCacheFactory(context, "apollo.db")
+
+        val memoryFirstThenSqlCacheFactory = cacheFactory.chain(sqlNormalizedCacheFactory)
+
         return ApolloClient.Builder()
             .serverUrl("https://swapi-graphql.netlify.app/.netlify/functions/index")
             .okHttpClient(httpClient)
+            .normalizedCache(memoryFirstThenSqlCacheFactory)
             .build()
 
     }

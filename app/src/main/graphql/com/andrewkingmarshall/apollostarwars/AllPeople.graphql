@@ -1,8 +1,10 @@
 query AllPeople {
   allPeople {
     people {
+      id
       name
       species {
+        id
         name
       }
     }
