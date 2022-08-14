@@ -5,12 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.andrewkingmarshall.apollostarwars.ui.theme.ApolloStarWarsTheme
 import com.andrewkingmarshall.apollostarwars.viewmodels.MainViewModel
@@ -41,8 +39,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(clickListener: () -> Unit = { Timber.d("Implement Me!") }) {
+
+    listOf(Color.Red, Color.Green)
+
     Button(
         onClick = clickListener,
+        colors = ButtonDefaults.buttonColors(backgroundColor = listOf(Color.Red, Color.Green, Color.Cyan).shuffled().first() )
     ) {
         Text(text = "Click Me!")
     }

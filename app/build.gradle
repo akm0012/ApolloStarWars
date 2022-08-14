@@ -70,6 +70,13 @@ dependencies {
     // Apollo
     implementation "com.apollographql.apollo3:apollo-runtime"
 
+    // Retrofit and Networking for Rest Calls
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+
     // Used in Logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
