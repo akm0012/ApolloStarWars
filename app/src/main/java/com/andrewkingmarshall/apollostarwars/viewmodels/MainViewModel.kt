@@ -1,6 +1,7 @@
 package com.andrewkingmarshall.apollostarwars.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.andrewkingmarshall.apollostarwars.network.GraphQLService
 import com.andrewkingmarshall.apollostarwars.repository.StarWarsRepository
@@ -14,6 +15,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: StarWarsRepository,
 ) : ViewModel() {
+
+    val peopleLiveData = repository.getAllPeople().asLiveData()
 
     fun onButtonClicked() {
         viewModelScope.launch {

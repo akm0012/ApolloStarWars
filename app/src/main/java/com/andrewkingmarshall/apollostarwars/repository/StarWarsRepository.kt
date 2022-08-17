@@ -2,8 +2,9 @@ package com.andrewkingmarshall.apollostarwars.repository
 
 import com.andrewkingmarshall.apollostarwars.AllPeopleQuery
 import com.andrewkingmarshall.apollostarwars.network.GraphQLService
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
+import com.andrewkingmarshall.apollostarwars.ui.domainmodels.StarWarsPerson
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -12,17 +13,42 @@ class StarWarsRepository @Inject constructor(
 
 ) {
 
-    suspend fun getAllPeople(): List<AllPeopleQuery.Person>? {
+    private val errorChannel = Channel<StarWarsRepositoryError>(Channel.RENDEZVOUS)
+    val errorFlow = errorChannel.receiveAsFlow()
 
-        val peopleResponse = graphQLService.getAllPeople()
+    fun getAllPeople(): Flow<List<StarWarsPerson>> {
+
+        return graphQLService.getAllPeople()
             .map {
-                Timber.d("First person got: ${it.data?.allPeople?.people?.first()}")
+                // Check for errors
+                if (it.hasErrors()) {
+                    it.errors?.forEach { error ->
+                        Timber.w("Error: getAllPeople(): ${error.message}")
+                        errorChannel.send(StarWarsRepositoryError(error.message))
+                    }
+                }
+                // Transform flow to send along just the list of people
+                it.data?.allPeople?.people
             }
-            .collect()
+            .map {
+                Timber.d("First person got: ${it?.first()}")
 
+                val listOfDomainObjects = mutableListOf<StarWarsPerson>()
+                it?.forEach { personDto ->
+                    personDto?.let {
+                        listOfDomainObjects.add(
+                            StarWarsPerson(
+                                personDto.id,
+                                personDto.name,
+                            )
+                        )
+                    }
+                }
 
-        return null
-
+                listOfDomainObjects
+            }
     }
 
 }
+
+class StarWarsRepositoryError(message: String, cause: Throwable? = null) : Throwable(message, cause)
